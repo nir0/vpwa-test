@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Voice PWA</title>
+    <link rel="manifest" href="manifest.json">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <style>
+        body { font-family: -apple-system, sans-serif; display: flex; flex-direction: column; justify-content: center; align-items: center; height: 100vh; margin: 0; background: #000; color: white; }
+        button { padding: 20px 40px; font-size: 20px; border-radius: 50px; border: 2px solid #007AFF; background: transparent; color: #007AFF; cursor: pointer; transition: 0.3s; }
+        button:active { background: #007AFF; color: white; }
+        .status { margin-top: 20px; font-size: 14px; color: #888; }
+    </style>
+</head>
+<body>
+    <button onclick="speak()">Активировать голос</button>
+    <div class="status" id="statusText">Нажми, чтобы услышать ассистента</div>
+
+    <script>
+        function speak() {
+            const text = "Привет! Теперь я установлена как приложение. Готова к работе через LiteLLM.";
+            const utterance = new SpeechSynthesisUtterance(text);
+            const voices = window.speechSynthesis.getVoices();
+            const siriVoice = voices.find(v => v.lang.includes('ru') && (v.name.includes('Siri') || v.name.includes('Milena')));
+            
+            if (siriVoice) utterance.voice = siriVoice;
+            utterance.lang = 'ru-RU';
+            
+            window.speechSynthesis.speak(utterance);
+            document.getElementById('statusText').innerText = "Говорю...";
+        }
+
+        // Регистрация Service Worker для PWA
+        if ('serviceWorker' in navigator) {
+            navigator.serviceWorker.register('sw.js');
+        }
+    </script>
+</body>
+</html>
